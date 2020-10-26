@@ -3,8 +3,8 @@ const mc = require("minecraft-protocol");
 function start(
     port,
     version,
-    host = '0.0.0.0',
-    onlineMode = true
+    onlineMode = true,
+    host = '0.0.0.0'
 ) {
     // exports
     exports.online = true;
@@ -15,7 +15,7 @@ function start(
     
     // all the Minecraft data relevant to the current version
     const mcData = require('minecraft-data')(server.version)
-
+    
     // when someone tries to login to the server
     server.on('login', function (client) {
         // default values for login packet (variable for each different version of Minecraft)
