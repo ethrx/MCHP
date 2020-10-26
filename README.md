@@ -1,5 +1,5 @@
 # Minecraft Honeypot (MCHP)
-A trap for Minecraft griefers.
+A trap for Minecraft hackers and griefers.
 ## What a Honeypot does
 It is just a "hacker trap". If rats are attracted to cheese, hackers are attracted to Honeypots.
 
@@ -51,4 +51,5 @@ See releases.
 - [x] Core functionality (crash the hacker game on join \[after a few seconds to waste their time though\])
 - [x] Port specification
 - [ ] Compile as a binary and release
+- [ ] Setup logging so that we can observe hackers and what packets they send to our servers (identifying hacked client packets)
 - [ ] Feign server with fake/random server info, or duplicate info from another server.
