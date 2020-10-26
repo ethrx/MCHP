@@ -1,0 +1,24 @@
+{
+  "name": "mchp",
+  "version": "1.0.0",
+  "description": "A honeypot for Minecraft",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethrx/MCHP.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ethrx/MCHP/issues"
+  },
+  "homepage": "https://github.com/ethrx/MCHP#readme",
+  "dependencies": {
+    "ascii-art-font": "^1.0.2",
+    "log-update": "^4.0.0",
+    "minecraft-protocol": "^1.19.0"
+  }
+}
