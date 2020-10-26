@@ -32,7 +32,7 @@ npm install
 ## Compiling the binary (optional)
 We can use PKG for this. Run the commands below to generate an executable file.
 
-You are now ready to go.Just replace `mchp.exe` with `node index.js` in the usage section if you are not using a binary.**
+You are now ready to go. Just replace `mchp.exe` with `node index.js` in the usage section if you are not using a binary.
 
 ### Usage
 `Usage: ./mchp.exe [port] [version] [online/offline (default online)] [host (default localhost)]`
@@ -46,10 +46,9 @@ You are now ready to go.Just replace `mchp.exe` with `node index.js` in the usag
 \[host]: specify the host of the server (don't mess with this if you don't know what it does)
 
 ### Binaries
+See releases.
 ## Roadmap
 - [x] Core functionality (crash the hacker game on join \[after a few seconds to waste their time though\])
 - [x] Port specification
-- [ ] Feign server with fake/random server info, or duplicate info from another server.
 - [ ] Compile as a binary and release
-
-
+- [ ] Feign server with fake/random server info, or duplicate info from another server.
