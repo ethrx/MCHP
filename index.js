@@ -5,8 +5,8 @@ console.log("MCHP - A honeypot to catch hackers and griefers")
 
 var args = process.argv.slice(2);
 var usage = `
-Usage: ./mchp.exe [port] [version] [host (default localhost)] [online/offline (default online)]
-Example Usage: ./mchp.exe 25565 1.16.2 127.0.0.1 offline`
+Usage: ./mchp.exe [port] [version] [online/offline (default online)] [host (default localhost)]
+Example Usage: ./mchp.exe 25565 1.16.2 offline 127.0.0.1`
 // provided no arguments
 if(args.length < 0){
     console.log(usage)
@@ -18,9 +18,11 @@ if(args.length < 0){
         process.exit()
     }
     if(args.length == 2){
-        server.start(args[0], args[1], "0.0.0.0", "online")
+        server.start(args[0], args[1], "online", "0.0.0.0")
+    } else if(args.length == 3 && (args[2] == "online" || args[2] == "offline")){
+        server.start(args[0], args[1], args[2], "0.0.0.0")
     } else {
-        server.start(args[0], args[1], args[2], args[3])
+        server.start(args[0], args[1], "online", args[3])
     }
 }
 
