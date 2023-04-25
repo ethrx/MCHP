@@ -1,49 +1,123 @@
-const server = require("./server")
-const log = require("log-update");
+#!/usr/bin/node
+const { parseArgs } = require('node:utils')
+const MC = require("minecraft-protocol")
 
-console.log("MCHP - A honeypot to catch hackers and griefers")
+async function main (options) {
+    if (options.help || !options.version) {
+        console.log(`Usage: ./mchp/index.js [options]
+       node ./mchp [options]
 
-var args = process.argv.slice(2);
-var usage = `
-Usage: ./mchp.exe [port] [version] [online/offline (default online)] [host (default localhost)]
-Example Usage: ./mchp.exe 25565 1.16.2 offline 127.0.0.1`
-
-// provided no arguments
-if (args.length <= 0) {
-    console.log(usage)
-    process.exit()
-} else {
-    if (args.length == 2) {
-        server.start(args[0], args[1], "online", "0.0.0.0")
-    } else if (args.length == 3) {
-        console.log(args[2])
-        if (args[2] == "online" || args[2] == "offline") {
-            server.start(args[0], args[1], args[2] == "online" ? true: false, "0.0.0.0")
-        }
-        else {
-            server.start(args[0], args[1], true, args[3])
-        }
-    } else if (args.length == 4) {
-        server.start(args[0], args[1], args[2], args[3])
-    } else if (args.length > 4) {
-        console.error("Too many arguments provided.")
-        console.log(usage)
-        process.exit()
-    } else {
-        console.log("Not enough arguments provided")
-        console.log(usage)
-        process.exit()
+Options:
+  -v, --version=...                Minecraft version to simulate (required)
+  -h, --host=...                   Listening host (default: 0.0.0.0)
+  -p, --port=0-65535               Listening port (default: 25565)
+  -n, --name=...                   Displayed server name (default: "A Minecraft server")
+  -l, --list=name,name2,...        Displayed player list (default: [])
+  -m, --maxplayers=0-255           Displayed player limit (default: 20)
+  -o, --offline                    Enable offline mode (default: false)
+  -k, --keepalive                  Accept and keep new connections open, wasting
+                                   time before client times out (default: false)
+  -q, --query=host[:port]          Query other Minecraft server for name and player list
+  -h, --help                       Show this page
+`)
+        return
     }
+    if (options.query) {
+        throw new Error('TODO')
+        options.name = ''
+        options.list = ''
+    }
+    const server = MC.createServer({
+        port: +options.port,
+        host: options.host,
+        kickTimeout: options.keepalive ? 30*1000 : 5*1000,
+        'online-mode': !options.offline,
+        beforePing: (response, client) => console.log('PING', client.socket.remoteAddress),
+        beforeLogin: (client) => console.log('LOGIN', client.uuid, client.username, client.socket.remoteAddress),
+        motd: options.name,
+        maxPlayers: +options.maxplayers,
+        version: options.version,
+        hideErrors: true
+    })
+
+    const mcData = require('minecraft-data')(server.version)
+    const defaultLoginPacket = mcData.loginPacket
+    server.on('login', function (client) {
+        if (!options.keepalive) return client.end()
+        client.write('login', {
+            entityId: (Math.random() * 50) | 0,
+            levelType: 'default',
+            gameMode: 0,
+            previousGameMode: 255,
+            worldNames: loginPacket.worldNames,
+            dimensionCodec: loginPacket.dimensionCodec,
+            dimension: loginPacket.dimension,
+            worldName: 'minecraft:overworld',
+            hashedSeed: [(Math.random() * 0x80000000) | 186264, (Math.random() * 0x80000000) | -2083388360],
+            difficulty: 0,
+            viewDistance: 8,
+            reducedDebugInfo: false,
+            maxPlayers: +options.maxplayers,
+            enableRespawnScreen: true,
+            isDebug: false,
+            isFlat: false
+        })
+    })
+    
+    console.log(`Minecraft Honeypot of version ${options.version} listening at ${options.host}:${options.port} (${options.offline ? 'offline' : 'online'} mode)`)
 }
 
-// create log-update logging system
-setInterval(() => {
-    log(
-        `
-Status: ${server.online ? "\x1b[32mOnline\x1b[0m" : "\x1b[31mOffline\x1b[0m"}
-Host: ${server.server.host}
-Port: ${server.server.port}
-Version: ${server.server.version}`
-    )
-}, 5000)
-
+const { values } = parseArgs({
+    args: process.argv.slice(2),
+    options: {
+        version: {
+            type: 'string',
+            short: 'v'
+        },
+        host: {
+            type: 'string',
+            short: 'h',
+            default: '0.0.0.0',
+        },
+        port: {
+            type: 'string',
+            short: 'p',
+            default: '25565',
+        },
+        name: {
+            type: 'string',
+            short: 'n',
+            default: 'A Minecraft server',
+        },
+        list: {
+            type: 'string',
+            short: 'l',
+            default: '',
+        },
+        maxplayers: {
+            type: 'number',
+            short: 'm',
+            default: '20'
+        },
+        offline: {
+            type: 'boolean',
+            short: 'o',
+            default: false,
+        },
+        keepalive: {
+            type: 'boolean',
+            short: 'k',
+            default: false,
+        },
+        query: {
+            type: 'string',
+            short: 'q',
+            default: '',
+        },
+        help: {
+            type: 'boolean',
+            short: 'h',
+            default: false,
+        },
+}})
+main(values)
